@@ -1,4 +1,4 @@
-package programmers.stage_1
+package programmers.level_1
 
 fun main(){
 
@@ -12,6 +12,6 @@ fun main(){
 
     calling.forEachIndexed{ index, s->
         val old=playerRankMap[index]
-        val prev=playerRankMap[]
+       // val prev=playerRankMap[]
     }
 }

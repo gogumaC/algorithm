@@ -4,14 +4,14 @@ package solved.ac.class_2
 
 fun main(){
 
-    //val numsCount=readLine()
-    val nums=readLine()!!.split(" ")
+    val n=readLine()!!.toInt()
+    val nums=readLine()!!.split(" ").map{it.toLong()}.toSet()
 
-    //val inputsCount=readLine()
-    val inputs=readLine()!!.split(" ")
+    val m=readLine()!!.toInt()
+    val checkNums=readLine()!!.split(" ").map{it.toLong()}
 
-    inputs.forEach{
-        println(if(nums.contains(it))1 else 0)
+    checkNums.forEach{
+        print("${if(nums.contains(it))1 else 0}\n")
     }
 
 }

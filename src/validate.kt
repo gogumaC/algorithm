@@ -1,26 +1,26 @@
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-val sb = StringBuilder()
 fun main() {
     val br = BufferedReader(InputStreamReader(System.`in`))
+    val sb = StringBuilder()
 
-    val (n, m) = br.readLine().split(" ").map { it.toInt() }
-    rec(mutableListOf(), n, 0, m)
-    println(sb)
-}
+    val T = br.readLine().toInt()
 
-fun rec(path: MutableList<Int>, n: Int, depth: Int, m: Int) {
-    if (depth == m) {
-        sb.append(path.joinToString(separator = " "))
+    val dp = IntArray(12) { 0 }
+    dp[1] = 1
+    dp[2] = 2
+    dp[3] = 4
+
+
+    for (i in 4..11) {
+        dp[i] = dp[i - 1] + dp[i - 2] + dp[i - 3]
+    }
+
+    for (i in 0 until T) {
+        val n = br.readLine().toInt()
+        sb.append(dp[n])
         sb.append("\n")
-        return
     }
-
-    val prev = if (path.isEmpty()) 0 else path.last()
-    for (i in prev + 1..n) {
-        path.add(i)
-        rec(path, n, depth + 1, m)
-        path.remove(i)
-    }
+    print(sb)
 }

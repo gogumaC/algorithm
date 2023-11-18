@@ -40,25 +40,21 @@ class BOJ1865() {
             path.add(intArrayOf(start, end, -weight))
         }
 
-        for (i in 1..N) {
-            if (bellmanFord(path, i)) return true
-        }
-
-        return false
+        return bellmanFord(path)
     }
 
-    fun bellmanFord(edges: MutableList<IntArray>, start: Int = 0): Boolean {
+    fun bellmanFord(edges: MutableList<IntArray>, start: Int = 1): Boolean {
         val dist = IntArray(N + 1) { INF }
         dist[start] = 0
         for (i in 1..N) {
-            var isChanged = false
+            var update = false
             for ((u, v, w) in edges) {
-                if (dist[u] != INF && dist[v] > dist[u] + w) {
+                if (dist[v] > dist[u] + w) {
                     dist[v] = dist[u] + w
-                    isChanged = true
+                    update = true
                 }
             }
-            if (!isChanged) break
+            if (!update) break
         }
 
         if (dist[start] < 0) return true
@@ -67,10 +63,8 @@ class BOJ1865() {
                 return true
             }
         }
-
         return dist[start] < 0
     }
-
 }
 
 fun main() {

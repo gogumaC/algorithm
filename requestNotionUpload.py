@@ -55,12 +55,15 @@ if __name__=="__main__":
 
     if match:
         op, platform, level, id, title,lan = match.groups()
+        url=""
+        if platform=='BOJ': url='https://www.acmicpc.net/problem/'+id
         problem=Problem(
             title=title,
             id=id,
             lan=lan,
             platform=platform,
-            level=level
+            level=level,
+            url=url
         )
        
         if op=="solve": request_notion_update(problem)

@@ -7,12 +7,13 @@ import json
 
 
 class Problem:
-    def __init__(self,title,id,lan,platform,level,memo=""):
+    def __init__(self,title,id,lan,platform,level,url="",memo=""):
         self.title=title
         self.id=id
         self.lan=lan
         self.platform=platform
         self.level=level
+        self.url=url
         self.memo=memo
 
     def __str__(self):

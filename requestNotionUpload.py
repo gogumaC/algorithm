@@ -39,7 +39,6 @@ if __name__=="__main__":
     local_request_url=""
 
     if os.path.isfile('.env'):
-        print("load local .env")
         dotenv.load_dotenv()
         local_request_url=os.getenv('request_url')
         local_commit_msg=os.getenv('commit_msg')
@@ -49,24 +48,23 @@ if __name__=="__main__":
     REQUEST_URL = os.environ['REQUEST_URL'] if os.environ.get('REQUEST_URL') != None else local_request_url
     COMMIT_MSG = os.environ['COMMIT_MSG'] if os.environ.get('COMMIT_MSG') != None else local_commit_msg
     PATTERN=os.environ['COMMIT_PATTERN'] if os.environ.get('COMMIT_PATTERN')!=None else local_pattern
-    
-    print(PATTERN)
-    match=re.match(PATTERN,COMMIT_MSG)
-    print(match)
 
+    match=re.match(PATTERN,COMMIT_MSG)
+
+    print("commit : ",COMMIT_MSG)
     if match:
-        op, platform, level, id, title,lan = match.groups()
+        op, platform, level, id, title,lans = match.groups()
         url=""
         if platform=='BOJ': url='https://www.acmicpc.net/problem/'+id
         problem=Problem(
             title=title,
             id=id,
-            lan=lan,
+            lan=[lan for lan in lans.split('_')],
             platform=platform,
             level=level,
             url=url
         )
-       
+        print(problem)
         if op=="solve": request_notion_update(problem)
 
     else:

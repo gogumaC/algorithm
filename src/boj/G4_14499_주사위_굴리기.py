@@ -1,61 +1,45 @@
 # https://www.acmicpc.net/problem/14499
-# 4:27~6:00, 7:54~
-from collections import deque
-
+# 4:27~6:00, 7:54~8:27
+# 8:19~8:39
 
 def main():
     n, m, x, y, k = map(int, input().split())
 
-    maps = [list(map(int, input().split())) for _ in range(n)]
-    hor = deque([0, 0, 0, 0])
-    ver = deque([0, 0, 0, 0])
-    if maps[x][y] != 0:
-        hor[0] = maps[x][y]
-        ver[3] = hor[0]
-        maps[x][y] = 0
+    board = [list(map(int, input().split())) for _ in range(n)]
 
-    moves = map(int, input().split())
+    ops = list(map(int, input().split()))
 
-    pos = [x, y]
-    for m in moves:
-        move(pos, hor, ver, m, maps)
+    dice = [0] * 6
+    d = ((0, 1), (0, -1), (-1, 0), (1, 0))
+    for op in ops:
+        dx, dy = d[op - 1]
+        x += dx
+        y += dy
+        if not (0 <= x < n and 0 <= y < m):
+            x -= dx
+            y -= dy
+            continue
+        dice = move(dice, op)
+
+        if board[x][y] == 0:
+            board[x][y] = dice[5]
+        else:
+            dice[5] = board[x][y]
+            board[x][y] = 0
+        print(dice[0])
 
 
-off = (0, (0, 1), (0, -1), (-1, 0), (1, 0))
-
-
-def move(pos, hor, ver, move, maps):
-    dx, dy = off[move]
-    x, y = pos
-    if not (0 <= x + dx < len(maps) and 0 <= y + dy < len(maps[0])):
-        return
-    if move == 1 or move == 2:
-        if move == 1:
-            hor.appendleft(hor.pop())
-        if move == 2:
-            hor.append(hor.popleft())
-        ver[1] = hor[2]
-        ver.pop()
-        ver.append(hor[0])
-    elif move == 3 or move == 4:
-        if move == 3:
-            ver.append(ver.popleft())
-        if move == 4:
-            ver.appendleft(ver.pop())
-        hor[2] = ver[1]
-        hor.popleft()
-        hor.appendleft(ver[3])
-
-    if maps[x + dx][y + dy] == 0 and hor[0] != 0:
-        maps[x + dx][y + dy] = hor[0]
-    elif maps[x + dx][y + dy] != 0:
-        hor[0] = maps[x + dx][y + dy]
-        ver[3] = hor[0]
-        maps[x + dx][y + dy] = 0
-
-    pos[0] += dx
-    pos[1] += dy
-    print(hor[2])
+def move(dice, op):
+    a, b, c, d, e, f = dice
+    if op == 1:
+        dice = [d, b, a, f, e, c]  # 421653
+    elif op == 2:
+        dice = [c, b, f, a, e, d]  # 326154
+    elif op == 3:
+        dice = [e, a, c, d, f, b]  # 513462
+    elif op == 4:
+        dice = [b, f, c, d, a, e]  # 263415
+    return dice
 
 
 main()

@@ -1,64 +1,76 @@
+from collections import deque
+
+
 def main():
     n, m = map(int, input().split())
     board = [list(input()) for _ in range(n)]
-
+    red = [-1, -1]
+    blue = [-1, -1]
+    isVisited = {}
     for i in range(n):
         for j in range(m):
             if board[i][j] == 'R':
-                red = (i, j)
+                red = [i, j]
                 board[i][j] = '.'
             if board[i][j] == 'B':
-                blue = (i, j)
+                blue = [i, j]
                 board[i][j] = '.'
 
-    for next_op in range(4):
-        bt(red, blue, 1, next_op, n, m, board)
+    q = deque([(red, blue, 9, 1)])
 
-    print(-1 if min_t == 11 else min_t)
+    while len(q) > 0:
+        red, blue, prev_op, count = q.popleft()
+
+        for i in range(4):
+            nr, nb = move(board, red, blue, i)
+            # print(nr, nb)
+            if board[nb[0]][nb[1]] == 'O':
+                continue
+            if board[nr[0]][nr[1]] == 'O':
+                print(count)
+                return
+            elif count < 10 and not (*nr, *nb) in isVisited:
+                q.append((nr, nb, i, count + 1))
+                isVisited[(*nr, *nb)] = True
+
+    print(-1)
 
 
-off = ((0, 1), (1, 0), (-1, 0), (0, -1))
-min_t = 11
+dx = (0, 0, 1, -1)
+dy = (1, -1, 0, 0)
 
 
-def bt(rp, bp, time, op, n, m, board):
-    global min_t
-    if time > 10 or time > min_t: return
-    nr = rp[:]
-    nb = bp[:]
+def move(board, red, blue, op):
+    nr = red[:]
+    nb = blue[:]
+    red_stuck = False
+    blue_stuck = False
 
-    rs = False
-    bs = False
-    red_fall = False
-    while not (rs and bs):
-        if not rs or not red_fall:
-            nr = [nr[i] + off[op][i] for i in range(len(nr))]
-            if not (0 <= nr[0] < n and 0 <= nr[1] < m) or board[nr[0]][nr[1]] == "#" or nr[0] == nb[0] and nr[1] == nb[
-                1]:
-                nr[0] -= off[op][0]
-                nr[1] -= off[op][1]
-                rs = True
-        if not bs:
-            nb = [nb[i] + off[op][i] for i in range(len(nr))]
-            if not (0 <= nb[0] < n and 0 <= nb[1] < m) or board[nb[0]][nb[1]] == "#" or (
-                    not red_fall and nr[0] == nb[0] and nr[1] == nb[1]):
-                nb[0] -= off[op][0]
-                nb[1] -= off[op][1]
-                bs = True
+    while not red_stuck or not blue_stuck:
+        if not red_stuck:
+            nr[0] += dx[op]
+            nr[1] += dy[op]
+            if board[nr[0]][nr[1]] == 'O':
+                red_stuck = True
+            elif nr == nb:
+                nr[0] -= dx[op]
+                nr[1] -= dy[op]
+                if blue_stuck: red_stuck = True
+            elif board[nr[0]][nr[1]] == '#':
+                red_stuck = True
+                nr[0] -= dx[op]
+                nr[1] -= dy[op]
+        if not blue_stuck:
+            nb[0] += dx[op]
+            nb[1] += dy[op]
+            if board[nb[0]][nb[1]] == 'O':
+                blue_stuck = True
+            elif board[nb[0]][nb[1]] == '#' or (nr[0] == nb[0] and nr[1] == nb[1]):
+                blue_stuck = True
+                nb[0] -= dx[op]
+                nb[1] -= dy[op]
 
-        if board[nb[0]][nb[1]] == 'O':
-            return
-
-        if board[nr[0]][nr[1]] == 'O':
-            red_fall = True
-
-    if red_fall:
-        min_t = min(min_t, time)
-        return
-
-    for next_op in range(4):
-        if next_op == op: continue
-        bt(nr, nb, time + 1, next_op, n, m, board)
+    return (nr, nb)
 
 
 main()

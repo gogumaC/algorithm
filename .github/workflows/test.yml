@@ -1,4 +1,4 @@
-name: algorithmAutoSorter
+name: algorithmAutoSorterTest
 on:
   push:
     branches: [ test ]

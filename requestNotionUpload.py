@@ -40,7 +40,6 @@ def parse_commit_msg(msg,pattern):
     match=re.match(pattern,head)
     if match:
         _, platform, level, title,lans = match.groups()
-        if platform=='BOJ': url='https://www.acmicpc.net/problem/'+id
         problem=Problem(
             title=title,
             id=id,
@@ -84,7 +83,6 @@ if __name__=="__main__":
         local_request_url=os.getenv('request_url')
         local_commit_msg=os.getenv('commit_msg')
         local_pattern=os.getenv('commit_pattern')
-        
     
     REQUEST_URL = os.environ['REQUEST_URL'] if os.environ.get('REQUEST_URL') != None else local_request_url
     COMMIT_MSG = os.environ['COMMIT_MSG'] if os.environ.get('COMMIT_MSG') != None else local_commit_msg

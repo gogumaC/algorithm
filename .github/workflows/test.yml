@@ -1,0 +1,36 @@
+name: algorithmAutoSorterTest
+on:
+  push:
+    branches: [ test ]
+
+jobs:
+  uploadToNotion:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x
+
+    - name: Install dependency
+      run: pip install -r requirements.txt
+
+    - name: Check commit messages
+      id: check_commit
+      run: |
+        if [[ $(git log -1 --pretty=format:%s) == *"solve"* ]]; then
+          echo "is_solve=true" >> $GITHUB_ENV
+        else
+          echo "is_solve=false" >> $GITHUB_ENV
+        fi
+
+    - name: sort-and-upload-request
+      if: env.is_solve == 'true'
+      env:
+        REQUEST_URL: ${{ secrets.REQUEST_URL}}
+        COMMIT_MSG: ${{github.event.head_commit.message}}
+        COMMIT_PATTERN: ${{vars.COMMIT_PATTERN}}
+      run: python requestNotionUpload.py

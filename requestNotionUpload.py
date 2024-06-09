@@ -86,22 +86,6 @@ if __name__=="__main__":
     COMMIT_MSG = os.environ['COMMIT_MSG'] if os.environ.get('COMMIT_MSG') != None else local_commit_msg
     PATTERN=os.environ['COMMIT_PATTERN'] if os.environ.get('COMMIT_PATTERN')!=None else local_pattern
 
-    COMMIT_MSG='''solve(BOJ): LV1_no additional info2_py
-
-# number: 문제 번호를 숫자로 작성d
-# categories : 해당 문제의 유형을 ,로 구분하여 작성
-# tags : 해당 문제의 태그를 ,로 구분하여 작성
-# time : 해당 문제 풀이에 걸린 시간을 분단위 숫자로 작성
-# try : 해당 문제에 몇번의 시도를 했는지 숫자로 작성
-# help: 해당 문제에 외부의 도움을 받았는지 true/false로 작성
-# url : 해당 문제의 url을 작성
-number:
-categories: []
-tags: []
-time: 
-try:
-help: false
-url:'''
     print("commit : ",COMMIT_MSG,"\n")
 
     body=parse_commit_msg(COMMIT_MSG,PATTERN)

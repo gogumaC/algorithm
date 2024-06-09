@@ -95,4 +95,3 @@ if __name__=="__main__":
     result=request_notion_update(body)
     if not result:
         sys.exit(1)
-

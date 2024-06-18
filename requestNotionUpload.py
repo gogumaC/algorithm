@@ -61,6 +61,8 @@ def parse_commit_msg(msg,pattern):
                         value=list(map(lambda x: x.strip(),value.split(",")))  
                     if value=='true' or value=='false':
                         value=bool(value)
+                    if key in ['time','try']:
+                        value=int(value)
                     details[key]=value
 
         request_body={**problem.__dict__, **details}

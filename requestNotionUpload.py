@@ -38,7 +38,10 @@ def parse_commit_msg(msg,pattern):
     head=lines[0]
     match=re.match(pattern,head)
     if match:
-        _, platform, level, title,lans = match.groups()
+        op, platform, level, title,lans = match.groups()
+        if op!="solve":
+            print(f"this commit is not about solved problem : {op}")
+            return
         problem=Problem(
             title=title,
             lan=[lan for lan in lans.split('_')],
@@ -91,7 +94,8 @@ if __name__=="__main__":
     print("commit : ",COMMIT_MSG,"\n")
 
     body=parse_commit_msg(COMMIT_MSG,PATTERN)
-    print(body)
-    result=request_notion_update(body)
-    if not result:
-        sys.exit(1)
+    if body:
+        print(body)
+        result=request_notion_update(body)
+        if not result:
+            sys.exit(1)

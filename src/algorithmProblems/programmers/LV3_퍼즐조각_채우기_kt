@@ -1,0 +1,103 @@
+import kotlin.collections.ArrayDeque
+class Solution {
+    fun solution(game_board: Array<IntArray>, table: Array<IntArray>): Int {
+        var answer: Int = -1
+       
+        val tableP=extractPeices(table,0)
+        val boardP=extractPeices(game_board,1)
+        val filled=BooleanArray(boardP.size)
+        val used=BooleanArray(tableP.size)
+        var count=0
+
+        for(i in boardP.indices){
+            if(filled[i]) continue
+            val bp=boardP[i]
+            for(j in tableP.indices){
+                if(used[j]) continue
+                val tp=tableP[j]
+                val res=checkMatch(bp,tp)
+                if(res){
+                    filled[i]=true
+                    used[j]=true
+                    count+=tp.size
+                    break
+                }
+            }
+        }
+        
+        return count
+    }
+}
+
+fun checkMatch(a:MutableList<Pair<Int,Int>>,b:MutableList<Pair<Int,Int>>):Boolean{
+    
+    if (a.size!=b.size) return false
+    val c=Comparator{o1:Pair<Int,Int>,o2:Pair<Int,Int>->
+        if(o1.first==o2.first) o1.second-o2.second else o1.first-o2.first
+    }
+    val temp=mutableListOf<Pair<Int,Int>>()
+    a.sortWith(c)
+    b.sortWith(c)
+    for((x,y) in a){
+        temp.add(x to y)
+    }
+    loop@ for(r in 0 until 4){
+        val gx=temp[0].first-b[0].first
+        val gy=temp[0].second-b[0].second
+        for(i in temp.indices){
+            val (ax,ay)=temp[i]
+            val (bx,byy)=b[i]
+            val cgx=ax-bx
+            val cgy=ay-byy
+            if(gx!=cgx || gy!=cgy){
+                rotate90(temp)
+                temp.sortWith(c)
+                continue@loop
+            }  
+        }
+        return true
+    }
+    return false
+}
+
+fun rotate90(arr:MutableList<Pair<Int,Int>>){
+    for(i in arr.indices){
+        val (x,y)=arr[i]
+        arr[i]=y to -x
+    }
+}
+
+fun extractPeices(table:Array<IntArray>,blank:Int):MutableList<MutableList<Pair<Int,Int>>>{
+    val pieces=mutableListOf<MutableList<Pair<Int,Int>>>()
+        
+    val visited=Array(table.size){BooleanArray(table[0].size)}
+
+    val ox=listOf(1,-1,0,0)
+    val oy=listOf(0,0,1,-1)
+
+
+    //조각분리
+    for(i in table.indices){
+        for(j in table[0].indices){
+            if(visited[i][j] || table[i][j]==blank) continue
+            visited[i][j]=true
+            pieces.add(mutableListOf(i to j))
+            val s=ArrayDeque<Pair<Int,Int>>()
+            s.add(i to j)
+            while(s.isNotEmpty()){
+                val (cx,cy)=s.removeLast()
+                for(k in 0 until 4){
+                    val nx=cx+ox[k]
+                    val ny=cy+oy[k]
+                    if(nx in 0 until table.size && ny in 0 until table[0].size&& !visited[nx][ny] &&table[nx][ny]==table[cx][cy]){
+                        visited[nx][ny]=true
+                        pieces.last().add(nx to ny)
+                        s.add(nx to ny)
+                    }
+                }
+            }
+        }
+    }
+
+    return pieces
+}
